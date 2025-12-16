@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Bàn Ăn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+        
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+        
+        .form-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        a.btn {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>⚙️ ADMIN</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/admin">📊 Dashboard</a></li>
+                <li><a href="/admin/monan">🍽️ Quản Lý Món Ăn</a></li>
+                <li><a href="/admin/banan">🪑 Quản Lý Bàn</a></li>
+                <li><a href="/admin/donhang">📋 Quản Lý Đơn Hàng</a></li>
+                <li><a href="/menu">👁️ Xem Menu</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="form-container">
+                <h1 class="form-title">
+                    <span th:text="${banAn.id != null} ? '✏️ Sửa Bàn' : '➕ Thêm Bàn Mới'">Thêm Bàn Mới</span>
+                </h1>
+                
+                <form th:action="@{/admin/banan/save}" th:object="${banAn}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    
+                    <div class="form-group">
+                        <label for="soBan">Số Bàn *</label>
+                        <input type="text" id="soBan" th:field="*{soBan}" required placeholder="VD: B01, B02">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="soChoNgoi">Số Chỗ Ngồi *</label>
+                        <input type="number" id="soChoNgoi" th:field="*{soChoNgoi}" required min="1" max="20" placeholder="4">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="trangThai">Trạng Thái</label>
+                        <select id="trangThai" th:field="*{trangThai}">
+                            <option value="TRONG">✅ Trống</option>
+                            <option value="DANG_SU_DUNG">⏳ Đang sử dụng</option>
+                            <option value="DA_DAT">📅 Đã đặt</option>
+                        </select>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">💾 Lưu</button>
+                        <a href="/admin/banan" class="btn btn-secondary">❌ Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

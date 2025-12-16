@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chọn Bàn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+        
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .page-title {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .page-title h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .page-title p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .ban-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+        }
+        
+        .ban-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .ban-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .ban-card form {
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .ban-icon {
+            font-size: 5em;
+            margin-bottom: 15px;
+        }
+        
+        .ban-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .ban-seats {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .btn-select {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-select:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .empty-message {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .empty-message h2 {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .empty-message a {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>⚙️ ADMIN</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/admin">📊 Dashboard</a></li>
+                <li><a href="/admin/monan">🍽️ Quản Lý Món Ăn</a></li>
+                <li><a href="/admin/banan">🪑 Quản Lý Bàn</a></li>
+                <li><a href="/admin/donhang">📋 Quản Lý Đơn Hàng</a></li>
+                <li><a href="/menu">👁️ Xem Menu</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-title">
+                <h1>🪑 Chọn Bàn Trống</h1>
+                <p>Vui lòng chọn bàn để tạo đơn hàng mới</p>
+            </div>
+            
+            <div class="ban-grid" th:if="${not #lists.isEmpty(banAnList)}">
+                <div class="ban-card" th:each="ban : ${banAnList}">
+                    <form th:action="@{/admin/donhang/tao}" method="post">
+                        <input type="hidden" name="banAnId" th:value="${ban.id}"/>
+                        <div class="ban-icon">🪑</div>
+                        <div class="ban-number" th:text="${ban.soBan}">B01</div>
+                        <div class="ban-seats">
+                            <strong th:text="${ban.soChoNgoi}">4</strong> chỗ ngồi
+                        </div>
+                        <button type="submit" class="btn-select">✅ Chọn Bàn</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="empty-message" th:if="${#lists.isEmpty(banAnList)}">
+                <h2>😢 Không có bàn trống!</h2>
+                <p style="margin-bottom: 20px;">Tất cả các bàn đang được sử dụng hoặc đã được đặt.</p>
+                <a href="/admin/donhang">⬅️ Quay lại</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

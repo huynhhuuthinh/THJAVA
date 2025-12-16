@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Món Ăn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+        }
+        
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .top-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #00b894;
+            color: white;
+        }
+        
+        .status-inactive {
+            background: #d63031;
+            color: white;
+        }
+        
+        .action-links a {
+            margin: 0 5px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9em;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit {
+            background: #74b9ff;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: #ff7675;
+            color: white;
+        }
+        
+        .btn-toggle {
+            background: #fdcb6e;
+            color: white;
+        }
+        
+        .action-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>⚙️ ADMIN</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/admin">📊 Dashboard</a></li>
+                <li><a href="/admin/monan">🍽️ Quản Lý Món Ăn</a></li>
+                <li><a href="/admin/banan">🪑 Quản Lý Bàn</a></li>
+                <li><a href="/admin/donhang">📋 Quản Lý Đơn Hàng</a></li>
+                <li><a href="/menu">👁️ Xem Menu</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="top-bar">
+                <h1>🍽️ Quản Lý Món Ăn</h1>
+                <a href="/admin/monan/add" class="btn btn-primary">➕ Thêm Món Mới</a>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên Món</th>
+                            <th>Danh Mục</th>
+                            <th>Giá</th>
+                            <th>Trạng Thái</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="mon : ${monAnList}">
+                            <td th:text="${mon.id}">1</td>
+                            <td th:text="${mon.tenMon}">Cơm sườn</td>
+                            <td th:text="${mon.danhMuc.tenDanhMuc}">Cơm</td>
+                            <td>
+                                <strong th:text="${#numbers.formatDecimal(mon.gia, 0, 'COMMA', 0, 'POINT')}">35,000</strong>đ
+                            </td>
+                            <td>
+                                <span class="status-badge" 
+                                      th:classappend="${mon.trangThai} ? 'status-active' : 'status-inactive'"
+                                      th:text="${mon.trangThai} ? 'Đang bán' : 'Ngừng bán'">
+                                    Đang bán
+                                </span>
+                            </td>
+                            <td class="action-links">
+                                <a th:href="@{/admin/monan/edit/{id}(id=${mon.id})}" class="btn-edit">✏️ Sửa</a>
+                                <a th:href="@{/admin/monan/toggle/{id}(id=${mon.id})}" class="btn-toggle">
+                                    🔄 <span th:text="${mon.trangThai} ? 'Ẩn' : 'Hiện'">Toggle</span>
+                                </a>
+                                <a th:href="@{/admin/monan/delete/{id}(id=${mon.id})}" 
+                                   class="btn-delete" 
+                                   onclick="return confirm('Bạn có chắc muốn xóa món này?')">
+                                    🗑️ Xóa
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
